@@ -1,0 +1,116 @@
+<p id="notice"><%= notice %></p>
+
+
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h2>
+          <%= @blog_post.title %>
+        </h2>
+      </div>
+      <div class="panel-body">
+        <p>
+          <strong>Posted By </strong>
+          <p>
+          <%= @blog_post.user.username%>
+          <em>on </em><%= @blog_post.created_at.strftime("%m/%d/%y at %l:%M%p")%>
+        </p>
+
+        <p>
+          <strong>Blog entry:</strong>
+          <%= @blog_post.blog_entry %>
+        </p>
+      </div>
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+             
+              <%= link_to 'Back', blog_posts_path, class: "navbar-brand" %>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <li class="active"> <%= link_to 'New Post', new_blog_post_path, class: 'nav navbar-nav navbar-right' %></li>
+                <li></li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <% if current_user.id == @blog_post.user.id %>
+                  <li><%= link_to 'Edit', edit_blog_post_path(@blog_post)%> </li>
+                  <li><%= link_to 'Destroy', @blog_post, method: :delete, data: { confirm: 'Are you sure?' } %> </li>
+                <% end %>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+      </div>
+    </div>  
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-2 col-md-offset-2">
+      <h3>Comment</h3>
+      <%= form_tag(create_comment_path) do %>
+        <%= text_area_tag :comment_entry,nil, placeholder: "And your reply is..." %>
+        <%= hidden_field_tag :blog_post_id, @blog_post.id %>
+        <%= hidden_field_tag :user_id, current_user.id %>
+    </div>
+    <div class="col-md-2">
+    <br /><br /><br />
+      <%= submit_tag "Submit", class: "btn btn-info" %>
+    <% end %>
+      <% if current_user.id == @blog_post.user.id %>
+        <p>
+        <%= link_to 'Edit', edit_blog_post_path(@blog_post)%> |
+        <%= link_to 'Destroy', @blog_post, method: :delete, data: { confirm: 'Are you sure?' } %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <% @blog_post.comments.each do |comment| %>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <%= comment.user.username %> says
+        </div>
+        <div class="panel-body">
+         <%= comment.comment_entry %>
+        </div>
+
+         <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+              <% if current_user.id == comment.user.id || current_user.id == @blog_post.id %>
+                <li><%= link_to "Delete", delete_comment_path(id: comment.id)%></li>
+            <% end %>
+            </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+      </div>
+    <% end %>
+  </div>
+</div>
+
